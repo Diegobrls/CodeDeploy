@@ -35,5 +35,5 @@ tasks.named('test') {
 }
 
 war{
-	archiveFileName = 'HolaMundo.war'
+	archiveFileName = 'hello-world.war'
 }
