@@ -1,33 +1,30 @@
-name: Implementar en AWS CodeDeploy
+name: Despliegue App EC2
 
 on:
   workflow_run:
-    workflows: ["Build and Deploy Java Application"]
-    types: 
+    workflows: ["Pruebas"]
+    types:
       - completed
 
 jobs:
-  
-  deploy:
+  build:
     runs-on: ubuntu-20.04
-    if: ${{github.event.workflow_run.conclusion}} == 'success'
-    permissions:
-      contents: read
-    
-    steps:
-      - uses: actions/checkout@v4
 
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Revisar código
+        uses: actions/checkout@v2
       - name: Configurar credenciales de AWS
-        uses: aws-actions/configure-aws-credentials@v4.0.2
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: "us-east-1"
-
-      - name: Configurar CodeDeploy
+          aws-region: <tu-región>
+      - name: Desplegar en EC2 via CodeDeploy
         run: |
           aws deploy create-deployment \
-            --application-name "CodeDeploy" \
-            --deployment-group-name "CodeDeploy_Group" \
+            --application-name <Tomcat> \
+            --deployment-group-name <implementacion-tomcat> \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
